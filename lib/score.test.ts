@@ -11,3 +11,11 @@ test('min score (-10) normalizes to 0', () => {
 test('neutral score (0) normalizes to 50', () => {
   expect(normalizeScore(0)).toBe(50)
 })
+
+test('out-of-range high (15) clamps to 100', () => {
+  expect(normalizeScore(15)).toBe(100)
+})
+
+test('out-of-range low (-15) clamps to 0', () => {
+  expect(normalizeScore(-15)).toBe(0)
+})

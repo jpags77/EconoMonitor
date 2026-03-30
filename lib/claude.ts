@@ -47,13 +47,15 @@ export async function generateMacroEntry(): Promise<MacroEntryInput> {
 
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 1024,
+    max_tokens: 2048,
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: USER_PROMPT(today) }],
   })
 
   const text = message.content[0].type === 'text' ? message.content[0].text : ''
+  if (!text) throw new Error(`Claude returned no text content. Stop reason: ${message.stop_reason}`)
   const parsed = JSON.parse(text)
+  if (!parsed.raw_signals) throw new Error(`Claude response missing raw_signals. Got: ${text.slice(0, 200)}`)
 
   const rawSum = Object.values(parsed.raw_signals as Record<string, number>).reduce(
     (a, b) => a + b,
