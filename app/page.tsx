@@ -38,7 +38,7 @@ export default async function Dashboard() {
   }
 
   return (
-    <main className="max-w-4xl mx-auto px-4 py-8 space-y-4">
+    <main className="max-w-6xl mx-auto px-4 py-8 space-y-4">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">EconoMonitor</h1>
         <p className="text-gray-500 text-sm">
@@ -52,8 +52,11 @@ export default async function Dashboard() {
       </div>
 
       <AssetGrid entry={latest} />
-      <TrendChart entries={entries} />
-      <DriversHeadlines entry={latest} />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <TrendChart entries={entries} />
+        <DriversHeadlines entry={latest} />
+      </div>
     </main>
   )
 }
