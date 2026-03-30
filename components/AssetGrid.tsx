@@ -16,6 +16,15 @@ const scoreColor: Record<number, string> = {
   [-2]: 'text-red-400',
 }
 
+// Explicit bg map — avoids dynamic class construction that Tailwind can't purge-scan
+const scoreBgColor: Record<number, string> = {
+  2: 'bg-green-400',
+  1: 'bg-green-300',
+  0: 'bg-gray-400',
+  [-1]: 'bg-orange-400',
+  [-2]: 'bg-red-400',
+}
+
 function AssetCard({ name, score, emoji }: { name: string; score: SignalScore; emoji: string }) {
   return (
     <div className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2">
@@ -31,7 +40,7 @@ function AssetCard({ name, score, emoji }: { name: string; score: SignalScore; e
           <div
             key={s}
             className={`h-1.5 flex-1 rounded-full ${
-              s <= score ? scoreColor[score].replace('text-', 'bg-') : 'bg-gray-700'
+              s <= score ? scoreBgColor[score] : 'bg-gray-700'
             }`}
           />
         ))}
