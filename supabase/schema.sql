@@ -27,3 +27,7 @@ create policy "Allow public reads" on macro_entries
 
 create policy "Allow public inserts" on macro_entries
   for insert with check (true);
+
+-- Dashboard enhancements migration (2026-04-03)
+alter table macro_entries add column if not exists key_metrics jsonb not null default '{}';
+alter table macro_entries add column if not exists justification text not null default '';
