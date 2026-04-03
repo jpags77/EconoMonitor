@@ -1,4 +1,5 @@
 import { MacroEntry, SignalScore } from '@/lib/types'
+import { scoreColor, scoreBgColor } from '@/lib/scoreColors'
 
 const scoreLabel: Record<number, string> = {
   2: 'Strong Buy',
@@ -6,23 +7,6 @@ const scoreLabel: Record<number, string> = {
   0: 'Neutral',
   [-1]: 'Caution',
   [-2]: 'Avoid',
-}
-
-const scoreColor: Record<number, string> = {
-  2: 'text-green-400',
-  1: 'text-green-300',
-  0: 'text-gray-400',
-  [-1]: 'text-orange-400',
-  [-2]: 'text-red-400',
-}
-
-// Explicit bg map — avoids dynamic class construction that Tailwind can't purge-scan
-const scoreBgColor: Record<number, string> = {
-  2: 'bg-green-400',
-  1: 'bg-green-300',
-  0: 'bg-gray-400',
-  [-1]: 'bg-orange-400',
-  [-2]: 'bg-red-400',
 }
 
 function AssetCard({ name, score, emoji }: { name: string; score: SignalScore; emoji: string }) {
