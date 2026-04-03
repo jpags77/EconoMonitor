@@ -42,11 +42,14 @@ async function fetchMacroArticles(): Promise<TavilyResult[]> {
     }
     const data = await res.json()
     for (const r of data.results ?? []) {
+      if (!r.url) continue
+      let source = r.url
+      try { source = new URL(r.url).hostname.replace('www.', '') } catch { /* keep raw url */ }
       results.push({
         title: r.title ?? '',
-        url: r.url ?? '',
+        url: r.url,
         published_date: r.published_date ?? new Date().toISOString().split('T')[0],
-        source: new URL(r.url).hostname.replace('www.', ''),
+        source,
       })
     }
   }
