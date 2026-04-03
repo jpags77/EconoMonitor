@@ -6,6 +6,8 @@ import DriversHeadlines from '@/components/DriversHeadlines'
 import { supabase } from '@/lib/db'
 import { MacroEntry } from '@/lib/types'
 
+export const dynamic = 'force-dynamic'
+
 // Query Supabase directly — no self-referential HTTP call needed in App Router
 async function getEntries(): Promise<MacroEntry[]> {
   const { data, error } = await supabase
