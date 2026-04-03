@@ -46,6 +46,13 @@ export interface TavilyArticle {
   source: string
 }
 
+export interface AssetNotes {
+  equities: string
+  bitcoin: string
+  gold: string
+  bonds: string
+}
+
 export interface MacroEntry {
   id: string
   created_at: string
@@ -64,6 +71,7 @@ export interface MacroEntry {
   raw_signals: RawSignals
   justification: string
   key_metrics: KeyMetrics | Record<string, never>  // {} for old rows
+  asset_notes: AssetNotes | Record<string, never>  // {} for old rows
 }
 
 // What Claude returns (before DB insert)
