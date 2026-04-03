@@ -31,3 +31,6 @@ create policy "Allow public inserts" on macro_entries
 -- Dashboard enhancements migration (2026-04-03)
 alter table macro_entries add column if not exists key_metrics jsonb not null default '{}';
 alter table macro_entries add column if not exists justification text not null default '';
+
+-- Asset notes migration (2026-04-03)
+alter table macro_entries add column if not exists asset_notes jsonb not null default '{}';
