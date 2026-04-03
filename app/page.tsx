@@ -3,6 +3,8 @@ import ActionPanel from '@/components/ActionPanel'
 import AssetGrid from '@/components/AssetGrid'
 import TrendChart from '@/components/TrendChart'
 import DriversHeadlines from '@/components/DriversHeadlines'
+import MacroExplainer from '@/components/MacroExplainer'
+import KeyMetrics from '@/components/KeyMetrics'
 import { supabase } from '@/lib/db'
 import { MacroEntry } from '@/lib/types'
 
@@ -33,7 +35,7 @@ export default async function Dashboard() {
         <h1 className="text-3xl font-bold text-white mb-2">EconoMonitor</h1>
         <p className="text-gray-400 mb-6">No data yet. Trigger a generation to get started.</p>
         <code className="text-sm text-gray-500 bg-gray-900 px-4 py-2 rounded">
-          POST /api/generate
+          GET /api/generate
         </code>
       </main>
     )
@@ -52,6 +54,10 @@ export default async function Dashboard() {
         <MacroStatusCard entry={latest} />
         <ActionPanel actionBias={latest.action_bias} />
       </div>
+
+      <MacroExplainer entry={latest} />
+
+      <KeyMetrics entry={latest} />
 
       <AssetGrid entry={latest} />
 
