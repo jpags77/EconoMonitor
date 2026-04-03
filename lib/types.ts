@@ -39,6 +39,13 @@ export interface KeyMetrics {
   treasury_10y: KeyMetric
 }
 
+export interface TavilyArticle {
+  title: string
+  url: string
+  published_date: string
+  source: string
+}
+
 export interface MacroEntry {
   id: string
   created_at: string

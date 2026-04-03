@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { generateMacroEntry } from '@/lib/claude'
 import { supabase } from '@/lib/db'
-import { TrendDirection } from '@/lib/types'
+import { TrendDirection, TavilyArticle } from '@/lib/types'
 
 // PRD Section 7: compare today's score vs. 3-day average
 function computeTrend(newScore: number, recentScores: number[]): TrendDirection {
@@ -12,16 +12,10 @@ function computeTrend(newScore: number, recentScores: number[]): TrendDirection 
   return 'stabilizing'
 }
 
-interface TavilyResult {
-  title: string
-  url: string
-  published_date: string
-  source: string
-}
-
-async function fetchMacroArticles(): Promise<TavilyResult[]> {
+async function fetchMacroArticles(): Promise<TavilyArticle[]> {
   const queries = ['macroeconomic news today', 'fed interest rates inflation tariffs']
-  const results: TavilyResult[] = []
+  const results: TavilyArticle[] = []
+  const seen = new Set<string>()
 
   for (const query of queries) {
     const res = await fetch('https://api.tavily.com/search', {
@@ -42,7 +36,8 @@ async function fetchMacroArticles(): Promise<TavilyResult[]> {
     }
     const data = await res.json()
     for (const r of data.results ?? []) {
-      if (!r.url) continue
+      if (!r.url || seen.has(r.url)) continue
+      seen.add(r.url)
       let source = r.url
       try { source = new URL(r.url).hostname.replace('www.', '') } catch { /* keep raw url */ }
       results.push({
@@ -59,7 +54,7 @@ async function fetchMacroArticles(): Promise<TavilyResult[]> {
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

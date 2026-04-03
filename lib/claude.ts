@@ -1,5 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
-import { MacroEntryInput } from './types'
+import { MacroEntryInput, TavilyArticle } from './types'
 import { normalizeScore } from './score'
 
 const client = new Anthropic({
@@ -9,13 +9,6 @@ const client = new Anthropic({
 const SYSTEM_PROMPT = `You are a macro economist analyzing global market conditions.
 You will respond ONLY with valid JSON. No markdown, no explanation, no code blocks.
 Your JSON must exactly match the schema provided. Be analytical and objective.`
-
-interface TavilyArticle {
-  title: string
-  url: string
-  published_date: string
-  source: string
-}
 
 const USER_PROMPT = (today: string, articles: TavilyArticle[]) => `
 Today is ${today}. Analyze current global macro conditions and return a JSON object.
@@ -30,7 +23,7 @@ Score each signal from -2 (strongly negative for risk assets) to +2 (strongly po
 - dollar_dxy: USD strength (strong=-2, weak=+2)
 - credit_stress: Credit/recession risk (rising=-2, low=+2)
 
-For key_metrics, use your web_search tool to find today's current market prices.
+For key_metrics, use your web_search tool to look up today's spot prices only. Do not use web_search for anything else.
 
 Return exactly this JSON structure:
 {
@@ -88,14 +81,21 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
     throw new Error(`No text block in Claude response. Content types: ${message.content.map(b => b.type).join(', ')}`)
   }
 
-  // Strip markdown code fences if present (Claude sometimes wraps JSON in ```json ... ```)
-  let rawText = textBlock.text.trim()
-  if (rawText.startsWith('```')) {
-    rawText = rawText.replace(/^```(?:json)?\s*\n?/, '').replace(/\n?```\s*$/, '')
+  // Strip markdown code fences if present, then extract JSON object
+  let jsonText = textBlock.text.trim()
+  if (jsonText.startsWith('```')) {
+    jsonText = jsonText.replace(/^```[a-zA-Z0-9]*\s*\n?/, '').replace(/\n?```\s*$/, '')
   }
+  // Extract JSON object in case Claude adds trailing prose
+  const jsonStart = jsonText.indexOf('{')
+  const jsonEnd = jsonText.lastIndexOf('}')
+  if (jsonStart === -1 || jsonEnd === -1) {
+    throw new Error(`No JSON object found in Claude response. Got: ${textBlock.text.slice(0, 200)}`)
+  }
+  const rawText = jsonText.slice(jsonStart, jsonEnd + 1)
 
   const parsed = JSON.parse(rawText)
-  if (!parsed.raw_signals) throw new Error(`Claude response missing raw_signals. Got: ${textBlock.text.slice(0, 200)}`)
+  if (!parsed.raw_signals) throw new Error(`Claude response missing raw_signals. Got: ${rawText.slice(0, 200)}`)
 
   const rawSum = Object.values(parsed.raw_signals as Record<string, number>).reduce(
     (a, b) => a + b,
