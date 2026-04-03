@@ -12,11 +12,9 @@ function computeTrend(newScore: number, recentScores: number[]): TrendDirection 
   return 'stabilizing'
 }
 
-export async function POST(request: Request) {
-  // Always require CRON_SECRET
+export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
-  const isVercel = process.env.VERCEL === '1' && request.headers.get('user-agent')?.includes('vercel-cron')
-  if (!isVercel && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
