@@ -43,7 +43,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ success: true, entry: data })
   } catch (err) {
-    console.error('Generate error:', err)
-    return NextResponse.json({ error: 'Generation failed' }, { status: 500 })
+    const message = err instanceof Error ? err.message : String(err)
+    console.error('Generate error:', message)
+    return NextResponse.json({ error: 'Generation failed', detail: message }, { status: 500 })
   }
 }
