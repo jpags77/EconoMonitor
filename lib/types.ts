@@ -14,6 +14,31 @@ export interface RawSignals {
   credit_stress: SignalScore
 }
 
+// Driver: plain string (legacy) or grounded article object (new)
+export type Driver =
+  | string
+  | { text: string; url: string; date: string; source: string }
+
+// Headline: plain string (legacy) or grounded article object (new)
+export type HeadlineItem = { text: string; url: string }
+export type Headline = string | HeadlineItem
+
+export interface KeyMetric {
+  value: number
+  change: number   // 1-day change in same unit as value
+  unit: string     // e.g. "USD/barrel", "%", "points"
+}
+
+export interface KeyMetrics {
+  oil_wti: KeyMetric
+  gold: KeyMetric
+  djia: KeyMetric
+  nasdaq: KeyMetric
+  sp500: KeyMetric
+  vix: KeyMetric
+  treasury_10y: KeyMetric
+}
+
 export interface MacroEntry {
   id: string
   created_at: string
@@ -27,9 +52,11 @@ export interface MacroEntry {
   gold_score: SignalScore
   bonds_score: SignalScore
   confidence: Confidence
-  drivers: string[]            // 2–3 bullet strings
-  headlines: string[]          // 3–5 headline strings
+  drivers: Driver[]
+  headlines: Headline[]
   raw_signals: RawSignals
+  justification: string
+  key_metrics: KeyMetrics | Record<string, never>  // {} for old rows
 }
 
 // What Claude returns (before DB insert)
