@@ -4,5 +4,10 @@
       "path": "/api/generate",
       "schedule": "0 14 * * *"
     }
-  ]
+  ],
+  "functions": {
+    "app/api/generate/route.ts": {
+      "maxDuration": 60
+    }
+  }
 }
