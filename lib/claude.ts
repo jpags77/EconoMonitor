@@ -60,6 +60,12 @@ Return exactly this JSON structure:
     "sp500":        { "value": <number>, "change": <number>, "unit": "points" },
     "vix":          { "value": <number>, "change": <number>, "unit": "index" },
     "treasury_10y": { "value": <number>, "change": <number>, "unit": "%" }
+  },
+  "asset_notes": {
+    "equities": "<2-3 plain-English sentences explaining why equities received their score today>",
+    "bitcoin":  "<2-3 plain-English sentences explaining why bitcoin received its score today>",
+    "gold":     "<2-3 plain-English sentences explaining why gold received its score today>",
+    "bonds":    "<2-3 plain-English sentences explaining why bonds received their score today>"
   }
 }
 `
@@ -118,5 +124,6 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
     drivers: parsed.drivers ?? [],
     headlines: parsed.headlines ?? [],
     key_metrics: parsed.key_metrics ?? {},
+    asset_notes: parsed.asset_notes ?? {},
   }
 }
