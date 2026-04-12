@@ -25,19 +25,19 @@ function AssetCard({ name, score, emoji, note }: {
       style={{ perspective: '600px', cursor: 'pointer' }}
       onClick={() => setFlipped(f => !f)}
     >
+      {/* Grid container: both faces occupy the same cell so height fits the taller face */}
       <div
         style={{
+          display: 'grid',
           transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 0.4s ease',
           transformStyle: 'preserve-3d',
-          position: 'relative',
-          minHeight: '110px',
         }}
       >
         {/* Front face */}
         <div
-          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2 absolute inset-0"
-          style={{ backfaceVisibility: 'hidden' }}
+          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2"
+          style={{ backfaceVisibility: 'hidden', gridArea: '1/1' }}
         >
           <div className="flex items-center gap-2">
             <span className="text-xl">{emoji}</span>
@@ -60,8 +60,8 @@ function AssetCard({ name, score, emoji, note }: {
 
         {/* Back face */}
         <div
-          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2 absolute inset-0"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2"
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1' }}
         >
           <div className="flex items-center gap-2">
             <span className="text-xl">{emoji}</span>
