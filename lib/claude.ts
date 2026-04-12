@@ -81,8 +81,10 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
     messages: [{ role: 'user', content: USER_PROMPT(today, articles) }],
   })
 
-  // With tools enabled, content may have tool_use/tool_result blocks — find the text block
-  const textBlock = message.content.find(b => b.type === 'text')
+  // web_search returns multiple content blocks: intro text, tool use/result, then final JSON.
+  // Always use the last text block — that's where the final JSON lands.
+  const textBlocks = message.content.filter(b => b.type === 'text')
+  const textBlock = textBlocks.at(-1)
   if (!textBlock || textBlock.type !== 'text') {
     throw new Error(`No text block in Claude response. Content types: ${message.content.map(b => b.type).join(', ')}`)
   }

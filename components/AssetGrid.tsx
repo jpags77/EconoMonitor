@@ -87,7 +87,7 @@ interface Props {
 }
 
 export default function AssetGrid({ entry }: Props) {
-  const notes = entry.asset_notes as AssetNotes
+  const notes = (entry.asset_notes ?? {}) as Partial<AssetNotes>
 
   return (
     <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6">
