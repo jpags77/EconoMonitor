@@ -34,3 +34,7 @@ alter table macro_entries add column if not exists justification text not null d
 
 -- Asset notes migration (2026-04-03)
 alter table macro_entries add column if not exists asset_notes jsonb not null default '{}';
+
+-- Flip card notes migration (2026-04-13)
+alter table macro_entries add column if not exists macro_summary text not null default '';
+alter table macro_entries add column if not exists action_notes text not null default '';
