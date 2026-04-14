@@ -72,6 +72,8 @@ export interface MacroEntry {
   justification: string
   key_metrics: KeyMetrics | Record<string, never>  // {} for old rows
   asset_notes: AssetNotes | Record<string, never>  // {} for old rows
+  macro_summary: string
+  action_notes: string
 }
 
 // What Claude returns (before DB insert)
