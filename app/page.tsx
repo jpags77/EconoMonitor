@@ -52,7 +52,7 @@ export default async function Dashboard() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <MacroStatusCard entry={latest} />
-        <ActionPanel actionBias={latest.action_bias} />
+        <ActionPanel entry={latest} />
       </div>
 
       <MacroExplainer entry={latest} />
