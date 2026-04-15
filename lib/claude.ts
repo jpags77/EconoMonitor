@@ -66,7 +66,9 @@ Return exactly this JSON structure:
     "bitcoin":  "<2-3 plain-English sentences explaining why bitcoin received its score today>",
     "gold":     "<2-3 plain-English sentences explaining why gold received its score today>",
     "bonds":    "<2-3 plain-English sentences explaining why bonds received their score today>"
-  }
+  },
+  "macro_summary": "<2-3 sentences explaining why the macro environment is labeled favorable/mixed/unfavorable today>",
+  "action_notes": "<2-3 sentences explaining why this action bias was chosen and what an investor should do with it>"
 }
 `
 
@@ -127,5 +129,7 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
     headlines: parsed.headlines ?? [],
     key_metrics: parsed.key_metrics ?? {},
     asset_notes: parsed.asset_notes ?? {},
+    macro_summary: parsed.macro_summary ?? '',
+    action_notes: parsed.action_notes ?? '',
   }
 }
