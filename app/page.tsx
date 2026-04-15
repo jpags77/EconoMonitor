@@ -43,10 +43,10 @@ export default async function Dashboard() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8 space-y-4">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">EconoMonitor</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-white mb-1">EconoMonitor</h1>
         <p className="text-gray-500 text-sm">
-          &ldquo;We are not predicting the future. We are detecting when the present is changing.&rdquo;
+          Scores 5 macro signals daily — real yields, Fed expectations, inflation/oil, USD strength, and credit stress — synthesized by Claude AI from live market data and news into an environment label, action bias, and per-asset guidance. Not financial advice.
         </p>
       </div>
 
