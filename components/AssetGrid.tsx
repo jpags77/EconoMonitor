@@ -94,7 +94,7 @@ export default function AssetGrid({ entry }: Props) {
       <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
         Asset Signals
       </h2>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <AssetCard name="Equities" score={entry.equities_score} emoji="📈" note={notes.equities ?? ''} />
         <AssetCard name="Bitcoin"  score={entry.bitcoin_score}  emoji="₿"  note={notes.bitcoin  ?? ''} />
         <AssetCard name="Gold"     score={entry.gold_score}     emoji="🟡" note={notes.gold     ?? ''} />
