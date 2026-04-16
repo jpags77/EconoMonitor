@@ -22,13 +22,13 @@ function AssetCard({ name, score, emoji, note }: {
 
   return (
     <div
-      style={{ perspective: '600px', cursor: 'pointer' }}
+      style={{ perspective: '600px', cursor: 'pointer', height: '120px' }}
       onClick={() => setFlipped(f => !f)}
     >
-      {/* Grid container: both faces occupy the same cell so height fits the taller face */}
       <div
         style={{
           display: 'grid',
+          height: '100%',
           transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 0.4s ease',
           transformStyle: 'preserve-3d',
@@ -61,9 +61,9 @@ function AssetCard({ name, score, emoji, note }: {
         {/* Back face */}
         <div
           className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2"
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1' }}
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1', overflow: 'hidden' }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="text-xl">{emoji}</span>
             <span className="text-gray-300 font-medium">{name}</span>
             <span className={`text-xs font-semibold ml-auto ${scoreColor[score]}`}>
@@ -71,11 +71,11 @@ function AssetCard({ name, score, emoji, note }: {
             </span>
           </div>
           {note ? (
-            <p className="text-gray-400 text-xs leading-relaxed flex-1">{note}</p>
+            <p className="text-gray-400 text-xs leading-relaxed flex-1 overflow-y-auto">{note}</p>
           ) : (
             <p className="text-gray-600 text-xs leading-relaxed flex-1">No analysis available for this entry.</p>
           )}
-          <span className="text-gray-600 text-xs">tap to flip back</span>
+          <span className="text-gray-600 text-xs shrink-0">tap to flip back</span>
         </div>
       </div>
     </div>

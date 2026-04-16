@@ -40,12 +40,13 @@ export default function ActionPanel({ entry }: Props) {
 
   return (
     <div
-      style={{ perspective: '800px', cursor: 'pointer' }}
+      style={{ perspective: '800px', cursor: 'pointer', height: '160px' }}
       onClick={() => setFlipped(f => !f)}
     >
       <div
         style={{
           display: 'grid',
+          height: '100%',
           transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
           transition: 'transform 0.4s ease',
           transformStyle: 'preserve-3d',
@@ -68,20 +69,20 @@ export default function ActionPanel({ entry }: Props) {
         {/* Back face */}
         <div
           className={`rounded-2xl border p-6 flex flex-col gap-3 ${config.bg}`}
-          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1' }}
+          style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1', overflow: 'hidden' }}
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between shrink-0">
             <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider">
               Action Bias
             </h2>
             <span className={`text-xs font-semibold ${config.color}`}>{config.label}</span>
           </div>
           {entry.action_notes ? (
-            <p className="text-gray-400 text-sm leading-relaxed flex-1">{entry.action_notes}</p>
+            <p className="text-gray-400 text-sm leading-relaxed flex-1 overflow-y-auto">{entry.action_notes}</p>
           ) : (
             <p className="text-gray-600 text-sm leading-relaxed flex-1">No notes available for this entry.</p>
           )}
-          <span className="text-gray-600 text-xs">tap to flip back</span>
+          <span className="text-gray-600 text-xs shrink-0">tap to flip back</span>
         </div>
       </div>
     </div>
