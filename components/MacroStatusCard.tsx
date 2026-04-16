@@ -33,7 +33,7 @@ export default function MacroStatusCard({ entry }: Props) {
 
   return (
     <div
-      style={{ perspective: '800px', cursor: 'pointer', height: '200px' }}
+      style={{ perspective: '800px', cursor: 'pointer', height: '220px' }}
       onClick={() => setFlipped(f => !f)}
     >
       <div

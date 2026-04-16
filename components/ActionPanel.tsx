@@ -40,7 +40,7 @@ export default function ActionPanel({ entry }: Props) {
 
   return (
     <div
-      style={{ perspective: '800px', cursor: 'pointer', height: '160px' }}
+      style={{ perspective: '800px', cursor: 'pointer', height: '185px' }}
       onClick={() => setFlipped(f => !f)}
     >
       <div

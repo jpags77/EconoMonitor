@@ -22,7 +22,7 @@ function AssetCard({ name, score, emoji, note }: {
 
   return (
     <div
-      style={{ perspective: '600px', cursor: 'pointer', height: '120px' }}
+      style={{ perspective: '600px', cursor: 'pointer', height: '170px' }}
       onClick={() => setFlipped(f => !f)}
     >
       <div
@@ -36,7 +36,7 @@ function AssetCard({ name, score, emoji, note }: {
       >
         {/* Front face */}
         <div
-          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2"
+          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col justify-between"
           style={{ backfaceVisibility: 'hidden', gridArea: '1/1' }}
         >
           <div className="flex items-center gap-2">
