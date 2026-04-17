@@ -13,7 +13,7 @@ function computeTrend(newScore: number, recentScores: number[]): TrendDirection 
 }
 
 async function fetchMacroArticles(): Promise<TavilyArticle[]> {
-  const queries = ['macroeconomic news today', 'fed interest rates inflation tariffs']
+  const queries = ['macroeconomic news today fed rates inflation']
   const results: TavilyArticle[] = []
   const seen = new Set<string>()
 

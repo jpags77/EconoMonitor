@@ -78,7 +78,7 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 4096,
-    tools: [{ type: 'web_search_20250305' as const, name: 'web_search', max_uses: 5 }],
+    tools: [{ type: 'web_search_20250305' as const, name: 'web_search', max_uses: 2 }],
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: USER_PROMPT(today, articles) }],
   })
