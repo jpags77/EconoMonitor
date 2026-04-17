@@ -9,14 +9,6 @@
     "lint": "next lint",
     "test": "jest"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/.next/"
-    ]
-  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
     "@supabase/supabase-js": "^2.100.1",
