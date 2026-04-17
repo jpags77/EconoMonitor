@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { generateMacroEntry } from '@/lib/claude'
 import { supabase } from '@/lib/db'
-import { supabaseServer } from '@/lib/db.server'
+import { getSupabaseServer } from '@/lib/db.server'
 import { TrendDirection, TavilyArticle } from '@/lib/types'
 
 // PRD Section 7: compare today's score vs. 3-day average
@@ -81,7 +81,7 @@ export async function GET(request: Request) {
     // Override Claude's trend_direction with computed value from historical data
     entry.trend_direction = computeTrend(entry.macro_score, recentScores)
 
-    const { data, error } = await supabaseServer
+    const { data, error } = await getSupabaseServer()
       .from('macro_entries')
       .insert(entry)
       .select()
