@@ -666,7 +666,7 @@ curl -s -X POST "https://api.vercel.com/v10/projects/prj_7FURp5RLQ3pisWobLdnh6L1
   -d "{\"key\":\"KIMI_API_KEY\",\"value\":\"${KIMI_KEY}\",\"type\":\"encrypted\",\"target\":[\"production\",\"preview\",\"development\"]}"
 ```
 
-Replace `$VERCEL_TOKEN` with the Vercel API token (`$VERCEL_TOKEN`).
+Replace `$VERCEL_TOKEN` with your Vercel API token (set it as an env var, do not hardcode).
 
 Verify:
 ```bash
