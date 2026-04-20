@@ -13,44 +13,41 @@ function computeTrend(newScore: number, recentScores: number[]): TrendDirection 
   return 'stabilizing'
 }
 
-async function fetchMacroArticles(): Promise<TavilyArticle[]> {
-  const queries = ['macroeconomic news today fed rates inflation']
-  const results: TavilyArticle[] = []
-  const seen = new Set<string>()
-
-  for (const query of queries) {
-    const res = await fetch('https://api.tavily.com/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        api_key: process.env.TAVILY_API_KEY,
-        query,
-        search_depth: 'basic',
-        max_results: 4,
-        include_domains: [],
-        topic: 'news',
-      }),
-    })
-    if (!res.ok) {
-      console.error(`Tavily search failed for "${query}": ${res.status}`)
-      continue
-    }
-    const data = await res.json()
-    for (const r of data.results ?? []) {
-      if (!r.url || seen.has(r.url)) continue
-      seen.add(r.url)
-      let source = r.url
-      try { source = new URL(r.url).hostname.replace('www.', '') } catch { /* keep raw url */ }
-      results.push({
-        title: r.title ?? '',
-        url: r.url,
-        published_date: r.published_date ?? new Date().toISOString().split('T')[0],
-        source,
-      })
-    }
+async function tavilySearch(query: string, maxResults: number): Promise<TavilyArticle[]> {
+  const res = await fetch('https://api.tavily.com/search', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      api_key: process.env.TAVILY_API_KEY,
+      query,
+      search_depth: 'basic',
+      max_results: maxResults,
+      topic: 'news',
+    }),
+  })
+  if (!res.ok) {
+    console.error(`Tavily search failed for "${query}": ${res.status}`)
+    return []
   }
+  const data = await res.json()
+  return (data.results ?? []).map((r: Record<string, string>) => {
+    let source = r.url
+    try { source = new URL(r.url).hostname.replace('www.', '') } catch { /* keep raw url */ }
+    return {
+      title: r.title ?? '',
+      url: r.url,
+      published_date: r.published_date ?? new Date().toISOString().split('T')[0],
+      source,
+    }
+  })
+}
 
-  return results
+async function fetchMacroArticles(): Promise<TavilyArticle[]> {
+  return tavilySearch('macroeconomic news today fed rates inflation', 4)
+}
+
+async function fetchPriceArticles(): Promise<TavilyArticle[]> {
+  return tavilySearch('WTI crude oil gold price S&P 500 NASDAQ VIX 10-year treasury yield today', 3)
 }
 
 export async function GET(request: Request) {
@@ -69,14 +66,17 @@ export async function GET(request: Request) {
 
     const recentScores = (recent ?? []).map((r: { macro_score: number }) => r.macro_score)
 
-    // Step 1: Tavily — fetch grounding articles for headlines + drivers
-    const articles = await fetchMacroArticles()
+    // Step 1: Tavily — fetch grounding articles and spot price data in parallel
+    const [articles, priceArticles] = await Promise.all([
+      fetchMacroArticles(),
+      fetchPriceArticles(),
+    ])
     if (articles.length === 0) {
-      console.warn('Tavily returned no articles — proceeding with empty context')
+      console.warn('Tavily returned no macro articles — proceeding with empty context')
     }
 
-    // Step 2: Claude — generate entry (uses web_search for prices, articles for grounding)
-    const entry = await generateMacroEntry(articles)
+    // Step 2: Kimi (NVIDIA NIM) — generate entry with grounding articles + price context
+    const entry = await generateMacroEntry(articles, priceArticles)
 
     // Override Claude's trend_direction with computed value from historical data
     entry.trend_direction = computeTrend(entry.macro_score, recentScores)
