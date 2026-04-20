@@ -5,6 +5,7 @@ import TrendChart from '@/components/TrendChart'
 import DriversHeadlines from '@/components/DriversHeadlines'
 import MacroExplainer from '@/components/MacroExplainer'
 import KeyMetrics from '@/components/KeyMetrics'
+import ChatPanel from '@/components/ChatPanel'
 import { supabase } from '@/lib/db'
 import { MacroEntry } from '@/lib/types'
 
@@ -60,6 +61,8 @@ export default async function Dashboard() {
       <KeyMetrics entry={latest} />
 
       <AssetGrid entry={latest} />
+
+      <ChatPanel entry={latest} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <TrendChart entries={entries} />
