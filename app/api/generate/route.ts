@@ -46,10 +46,6 @@ async function fetchMacroArticles(): Promise<TavilyArticle[]> {
   return tavilySearch('macroeconomic news today fed rates inflation', 4)
 }
 
-async function fetchPriceArticles(): Promise<TavilyArticle[]> {
-  return tavilySearch('WTI crude oil gold price S&P 500 NASDAQ VIX 10-year treasury yield today', 3)
-}
-
 export async function GET(request: Request) {
   const authHeader = request.headers.get('authorization')
   if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -66,17 +62,14 @@ export async function GET(request: Request) {
 
     const recentScores = (recent ?? []).map((r: { macro_score: number }) => r.macro_score)
 
-    // Step 1: Tavily — fetch grounding articles and spot price data in parallel
-    const [articles, priceArticles] = await Promise.all([
-      fetchMacroArticles(),
-      fetchPriceArticles(),
-    ])
+    // Step 1: Tavily — fetch grounding articles for headlines + drivers
+    const articles = await fetchMacroArticles()
     if (articles.length === 0) {
-      console.warn('Tavily returned no macro articles — proceeding with empty context')
+      console.warn('Tavily returned no articles — proceeding with empty context')
     }
 
-    // Step 2: Kimi (NVIDIA NIM) — generate entry with grounding articles + price context
-    const entry = await generateMacroEntry(articles, priceArticles)
+    // Step 2: Claude Sonnet — generate entry (uses web_search for prices, articles for grounding)
+    const entry = await generateMacroEntry(articles)
 
     // Override Claude's trend_direction with computed value from historical data
     entry.trend_direction = computeTrend(entry.macro_score, recentScores)
