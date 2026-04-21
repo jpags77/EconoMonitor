@@ -58,7 +58,7 @@ export async function callKimi(systemPrompt: string, userPrompt: string): Promis
         { role: 'user', content: userPrompt },
       ],
       stream: false,
-      max_tokens: 4096,
+      max_tokens: 2048,
     }),
   })
   if (!res.ok) throw new Error(`Kimi NIM error: ${res.status} ${await res.text()}`)
