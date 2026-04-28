@@ -58,7 +58,7 @@ export async function streamChatResponse(
       model: CHAT_MODEL,
       messages: [{ role: 'system', content: systemPrompt }, ...messages],
       stream: true,
-      max_completion_tokens: 1024,
+      max_completion_tokens: 4096,
     }),
   })
 }
