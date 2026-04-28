@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { streamKimiResponse, createSSETransform } from '@/lib/kimi'
+import { streamChatResponse, createSSETransform } from '@/lib/kimi'
 import { buildSystemPrompt } from '@/lib/chatPrompt'
 import { MacroEntry, TavilyArticle } from '@/lib/types'
 
@@ -45,14 +45,14 @@ export async function POST(request: Request) {
 
   const articles = await searchForContext(query)
   const systemPrompt = buildSystemPrompt(entry, articles)
-  const kimiResponse = await streamKimiResponse(systemPrompt, messages)
+  const llmResponse = await streamChatResponse(systemPrompt, messages)
 
-  if (!kimiResponse.ok || !kimiResponse.body) {
-    console.error('Kimi API error:', kimiResponse.status)
+  if (!llmResponse.ok || !llmResponse.body) {
+    console.error('Chat LLM error:', llmResponse.status)
     return NextResponse.json({ error: 'Chat unavailable' }, { status: 500 })
   }
 
-  const transformed = kimiResponse.body.pipeThrough(createSSETransform())
+  const transformed = llmResponse.body.pipeThrough(createSSETransform())
 
   return new Response(transformed, {
     headers: { 'Content-Type': 'text/plain; charset=utf-8' },

@@ -1,7 +1,7 @@
-// lib/kimi.ts — all LLM calls route through NVIDIA NIM (OpenAI-compatible)
+// lib/kimi.ts — chat LLM calls via OpenAI API
 
-const NIM_BASE = 'https://integrate.api.nvidia.com/v1'
-const KIMI_MODEL = 'moonshotai/kimi-k2.5'
+const OPENAI_BASE = 'https://api.openai.com/v1'
+const CHAT_MODEL = 'gpt-5-nano'
 
 // Parses a single SSE line and returns the text delta, or null if there's nothing to emit.
 // Exported for unit testing.
@@ -43,42 +43,19 @@ export function createSSETransform(): TransformStream<Uint8Array, Uint8Array> {
   })
 }
 
-// Non-streaming call — returns the full response text. Used for macro generation.
-export async function callKimi(systemPrompt: string, userPrompt: string): Promise<string> {
-  const res = await fetch(`${NIM_BASE}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: KIMI_MODEL,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt },
-      ],
-      stream: false,
-      max_tokens: 2048,
-    }),
-  })
-  if (!res.ok) throw new Error(`Kimi NIM error: ${res.status} ${await res.text()}`)
-  const data = await res.json()
-  return (data.choices?.[0]?.message?.content as string) ?? ''
-}
-
-// Streaming call — returns the raw Response for piping. Used for chat.
-export async function streamKimiResponse(
+// Streaming call — returns the raw Response for piping.
+export async function streamChatResponse(
   systemPrompt: string,
   messages: { role: 'user' | 'assistant'; content: string }[]
 ): Promise<Response> {
-  return fetch(`${NIM_BASE}/chat/completions`, {
+  return fetch(`${OPENAI_BASE}/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.NVIDIA_API_KEY}`,
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: KIMI_MODEL,
+      model: CHAT_MODEL,
       messages: [{ role: 'system', content: systemPrompt }, ...messages],
       stream: true,
       max_tokens: 1024,
