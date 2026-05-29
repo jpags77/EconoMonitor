@@ -21,7 +21,9 @@ export default function ChatPanel({ entry }: { entry: MacroEntry }) {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    if (messages.length > 1) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [messages])
 
   async function handleSubmit(e: React.FormEvent) {

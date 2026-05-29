@@ -18,7 +18,6 @@ const signalDisplayName: Record<string, string> = {
   fed_expectations: 'Fed Expectations',
   inflation: 'Inflation',
   oil: 'Oil',
-  inflation_oil: 'Inflation / Oil', // legacy v1 rows
   dollar_dxy: 'Dollar (DXY)',
   credit_stress: 'Credit Stress',
 }
@@ -27,6 +26,27 @@ const environmentLabel: Record<MarketEnvironment, string> = {
   favorable: 'Favorable',
   mixed: 'Mixed',
   unfavorable: 'Unfavorable',
+}
+
+function SignalRow({ name, score }: { name: string; score: number }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="text-gray-400 text-sm w-36 shrink-0">{name}</span>
+      <div className="flex gap-1 flex-1">
+        {[-2, -1, 0, 1, 2].map((s) => (
+          <div
+            key={s}
+            className={`h-2 flex-1 rounded-full ${
+              s <= score ? scoreBgColor[score] : 'bg-gray-700'
+            }`}
+          />
+        ))}
+      </div>
+      <span className="text-gray-500 text-xs w-32 text-right shrink-0">
+        {signalLabel[score]}
+      </span>
+    </div>
+  )
 }
 
 export default function MacroExplainer({ entry }: Props) {
@@ -39,26 +59,14 @@ export default function MacroExplainer({ entry }: Props) {
       </h2>
 
       <div className="space-y-3">
-        {signals.map(([key, score]) => (
-          <div key={key} className="flex items-center gap-3">
-            <span className="text-gray-400 text-sm w-36 shrink-0">
-              {signalDisplayName[key] ?? key}
-            </span>
-            <div className="flex gap-1 flex-1">
-              {[-2, -1, 0, 1, 2].map((s) => (
-                <div
-                  key={s}
-                  className={`h-2 flex-1 rounded-full ${
-                    s <= score ? scoreBgColor[score] : 'bg-gray-700'
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-gray-500 text-xs w-32 text-right shrink-0">
-              {signalLabel[score]}
-            </span>
-          </div>
-        ))}
+        {signals.flatMap(([key, score]) =>
+          key === 'inflation_oil'
+            ? [
+                <SignalRow key="inflation" name="Inflation" score={score} />,
+                <SignalRow key="oil" name="Oil" score={score} />,
+              ]
+            : [<SignalRow key={key} name={signalDisplayName[key] ?? key} score={score} />]
+        )}
       </div>
 
       {entry.justification && (
