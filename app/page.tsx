@@ -7,6 +7,7 @@ import MacroExplainer from '@/components/MacroExplainer'
 import MarketExplainer from '@/components/MarketExplainer'
 import KeyMetrics from '@/components/KeyMetrics'
 import ChatPanel from '@/components/ChatPanel'
+import IndexTicker from '@/components/IndexTicker'
 import { supabase } from '@/lib/db'
 import { MacroEntry } from '@/lib/types'
 
@@ -44,7 +45,8 @@ export default async function Dashboard() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8 space-y-4">
+    <main className="max-w-6xl mx-auto px-4 py-8 md:pt-14 space-y-4">
+      <IndexTicker entry={latest} />
       <div className="mb-6">
         <h1 className="text-5xl font-black text-white mb-1 tracking-tight">EconoMonitor</h1>
         <p className="text-gray-400 text-sm max-w-2xl">
