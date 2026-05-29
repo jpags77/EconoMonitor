@@ -9,7 +9,8 @@ export type SignalScore = -2 | -1 | 0 | 1 | 2
 export interface RawSignals {
   real_yields: SignalScore
   fed_expectations: SignalScore
-  inflation_oil: SignalScore
+  inflation: SignalScore
+  oil: SignalScore
   dollar_dxy: SignalScore
   credit_stress: SignalScore
 }
@@ -74,6 +75,8 @@ export interface MacroEntry {
   asset_notes: AssetNotes | Record<string, never>  // {} for old rows
   macro_summary: string
   action_notes: string
+  schema_version: number       // 1 = legacy 5-signal (±10), 2 = 6-signal (±12)
+  market_commentary: string    // LLM commentary contrasting index moves vs macro scores
 }
 
 // What Claude returns (before DB insert)
