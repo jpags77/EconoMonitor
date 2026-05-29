@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { generateMacroEntry } from '@/lib/claude'
+import { generateMarketCommentary } from '@/lib/commentary'
 import { supabase } from '@/lib/db'
 import { getSupabaseServer } from '@/lib/db.server'
 import { TrendDirection, TavilyArticle } from '@/lib/types'
@@ -53,14 +54,17 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Get last 3 entries to compute trend
-    const { data: recent } = await supabase
+    // Pull recent history: trend uses last 3, commentary uses up to 30.
+    const { data: history } = await supabase
       .from('macro_entries')
-      .select('macro_score')
+      .select('date, macro_score, key_metrics')
       .order('date', { ascending: false })
-      .limit(3)
+      .limit(30)
 
-    const recentScores = (recent ?? []).map((r: { macro_score: number }) => r.macro_score)
+    const historyRows = history ?? []
+    const recentScores = historyRows
+      .slice(0, 3)
+      .map((r: { macro_score: number }) => r.macro_score)
 
     // Step 1: Tavily — fetch grounding articles for headlines + drivers
     const articles = await fetchMacroArticles()
@@ -73,6 +77,9 @@ export async function GET(request: Request) {
 
     // Override Claude's trend_direction with computed value from historical data
     entry.trend_direction = computeTrend(entry.macro_score, recentScores)
+
+    // Feature 3: reconcile market moves against macro scores
+    entry.market_commentary = await generateMarketCommentary(entry, historyRows)
 
     const { data, error } = await getSupabaseServer()
       .from('macro_entries')
