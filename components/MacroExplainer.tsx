@@ -16,7 +16,9 @@ const signalLabel: Record<number, string> = {
 const signalDisplayName: Record<string, string> = {
   real_yields: 'Real Yields',
   fed_expectations: 'Fed Expectations',
-  inflation_oil: 'Inflation / Oil',
+  inflation: 'Inflation',
+  oil: 'Oil',
+  inflation_oil: 'Inflation / Oil', // legacy v1 rows
   dollar_dxy: 'Dollar (DXY)',
   credit_stress: 'Credit Stress',
 }
