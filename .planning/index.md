@@ -5,9 +5,9 @@ One-line summary of every page in this wiki. Update on every page creation.
 ## Current State
 
 **Iteration:** 1
-**Phase:** Not started — run session-start at the beginning of each session
+**Phase:** PLAN complete (spec written) → BUILD
 **Fidelity target:** C) MVP — production-ready enough to put in front of real users
-**Last updated:** 2026-05-29T00:00:00Z
+**Last updated:** 2026-05-29T01:00:00Z
 
 ## Engagement Context
 
@@ -16,13 +16,13 @@ One-line summary of every page in this wiki. Update on every page creation.
 **Done looks like:** All three features ship to production — data is being recorded daily, the ticker floats visibly on desktop, and the explainer generates meaningful LLM commentary.
 
 ## vision/
-(empty — populate after /office-hours)
+- [2026-05-29-three-features-design.md](vision/2026-05-29-three-features-design.md) — approved design for time-series split, index ticker, market explainer
 
 ## prior-art/
 (empty — populate after prior-art-survey)
 
 ## plans/
-(empty — populate after writing-plans)
+- [docs/superpowers/plans/2026-05-29-three-features.md](../docs/superpowers/plans/2026-05-29-three-features.md) — 8-task implementation spec for the three features
 
 ## reviews/
 (empty — populate after /design-review, /cso, second-opinion)
