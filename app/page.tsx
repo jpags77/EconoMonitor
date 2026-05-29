@@ -4,6 +4,7 @@ import AssetGrid from '@/components/AssetGrid'
 import TrendChart from '@/components/TrendChart'
 import DriversHeadlines from '@/components/DriversHeadlines'
 import MacroExplainer from '@/components/MacroExplainer'
+import MarketExplainer from '@/components/MarketExplainer'
 import KeyMetrics from '@/components/KeyMetrics'
 import ChatPanel from '@/components/ChatPanel'
 import { supabase } from '@/lib/db'
@@ -59,6 +60,8 @@ export default async function Dashboard() {
       <MacroExplainer entry={latest} />
 
       <KeyMetrics entry={latest} />
+
+      <MarketExplainer entry={latest} />
 
       <AssetGrid entry={latest} />
 
