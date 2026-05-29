@@ -21,7 +21,8 @@ For key_metrics, use your web_search tool to look up today's spot prices only. D
 Score each signal from -2 (strongly negative for risk assets) to +2 (strongly positive):
 - real_yields: 10Y Treasury yield direction (rising=-2, falling=+2)
 - fed_expectations: Fed policy stance (hawkish=-2, dovish=+2)
-- inflation_oil: Oil/inflation trend (rising=-2, falling=+2)
+- inflation: Core inflation trend, CPI/PCE direction (rising=-2, cooling=+2)
+- oil: Crude oil price trend as a distinct supply/cost shock (rising=-2, falling=+2)
 - dollar_dxy: USD strength (strong=-2, weak=+2)
 - credit_stress: Credit/recession risk (rising=-2, low=+2)
 
@@ -30,7 +31,8 @@ Return exactly this JSON structure:
   "raw_signals": {
     "real_yields": <-2 to 2>,
     "fed_expectations": <-2 to 2>,
-    "inflation_oil": <-2 to 2>,
+    "inflation": <-2 to 2>,
+    "oil": <-2 to 2>,
     "dollar_dxy": <-2 to 2>,
     "credit_stress": <-2 to 2>
   },
@@ -110,7 +112,8 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
 
   return {
     date: today,
-    macro_score: normalizeScore(rawSum),
+    schema_version: 2,
+    macro_score: normalizeScore(rawSum, 6),
     raw_signals: parsed.raw_signals,
     market_environment: parsed.market_environment,
     trend_direction: parsed.trend_direction,
@@ -127,5 +130,6 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
     asset_notes: parsed.asset_notes ?? {},
     macro_summary: parsed.macro_summary ?? '',
     action_notes: parsed.action_notes ?? '',
+    market_commentary: '',
   }
 }

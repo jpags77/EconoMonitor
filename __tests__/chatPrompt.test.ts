@@ -20,7 +20,8 @@ const mockEntry: MacroEntry = {
   raw_signals: {
     real_yields: -1,
     fed_expectations: -1,
-    inflation_oil: -2,
+    inflation: -2,
+    oil: -1,
     dollar_dxy: 1,
     credit_stress: -1,
   },
@@ -28,6 +29,8 @@ const mockEntry: MacroEntry = {
   asset_notes: {} as never,
   macro_summary: 'Test summary',
   action_notes: 'Test action notes',
+  schema_version: 2,
+  market_commentary: 'Test commentary',
 }
 
 describe('buildSystemPrompt', () => {
