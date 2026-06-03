@@ -5,6 +5,19 @@ import { supabase } from '@/lib/db'
 import { getSupabaseServer } from '@/lib/db.server'
 import { TrendDirection, TavilyArticle } from '@/lib/types'
 
+async function withRetry<T>(fn: () => Promise<T>, attempts = 2, delayMs = 3000): Promise<T> {
+  let lastErr: unknown
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn()
+    } catch (err) {
+      lastErr = err
+      if (i < attempts - 1) await new Promise(r => setTimeout(r, delayMs))
+    }
+  }
+  throw lastErr
+}
+
 // PRD Section 7: compare today's score vs. 3-day average
 function computeTrend(newScore: number, recentScores: number[]): TrendDirection {
   if (recentScores.length === 0) return 'stabilizing'
@@ -54,6 +67,20 @@ export async function GET(request: Request) {
   }
 
   try {
+    const today = new Date().toISOString().split('T')[0]
+
+    // Idempotency: if today's entry already exists, return it without re-generating
+    const { data: existing } = await supabase
+      .from('macro_entries')
+      .select('*')
+      .eq('date', today)
+      .maybeSingle()
+
+    if (existing) {
+      console.log(`Entry for ${today} already exists — skipping generation`)
+      return NextResponse.json({ success: true, entry: existing, skipped: true })
+    }
+
     // Pull recent history: trend uses last 3, commentary uses up to 30.
     const { data: history } = await supabase
       .from('macro_entries')
@@ -73,13 +100,14 @@ export async function GET(request: Request) {
     }
 
     // Step 2: Claude Sonnet — generate entry (uses web_search for prices, articles for grounding)
-    const entry = await generateMacroEntry(articles)
+    // Wrapped in retry to handle transient API failures
+    const entry = await withRetry(() => generateMacroEntry(articles))
 
     // Override Claude's trend_direction with computed value from historical data
     entry.trend_direction = computeTrend(entry.macro_score, recentScores)
 
     // Feature 3: reconcile market moves against macro scores
-    entry.market_commentary = await generateMarketCommentary(entry, historyRows)
+    entry.market_commentary = await withRetry(() => generateMarketCommentary(entry, historyRows))
 
     const { data, error } = await getSupabaseServer()
       .from('macro_entries')

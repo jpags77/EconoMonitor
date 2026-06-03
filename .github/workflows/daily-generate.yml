@@ -1,0 +1,26 @@
+name: Daily Macro Generate
+
+on:
+  schedule:
+    # 12:30 UTC daily — matches previous Vercel cron schedule
+    - cron: '30 12 * * *'
+  workflow_dispatch: # allow manual trigger from GitHub UI
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Trigger generate endpoint
+        run: |
+          RESPONSE=$(curl -sS -w "\n%{http_code}" \
+            -X GET "${{ secrets.APP_URL }}/api/generate" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+          echo "Status: $HTTP_CODE"
+          echo "Response: $BODY"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "Generate failed with status $HTTP_CODE"
+            exit 1
+          fi

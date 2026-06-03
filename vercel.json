@@ -1,13 +1,7 @@
 {
-  "crons": [
-    {
-      "path": "/api/generate",
-      "schedule": "30 12 * * *"
-    }
-  ],
   "functions": {
     "app/api/generate/route.ts": {
-      "maxDuration": 60
+      "maxDuration": 300
     },
     "app/api/chat/route.ts": {
       "maxDuration": 60
