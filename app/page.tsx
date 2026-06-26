@@ -8,6 +8,7 @@ import MarketExplainer from '@/components/MarketExplainer'
 import KeyMetrics from '@/components/KeyMetrics'
 import ChatPanel from '@/components/ChatPanel'
 import IndexTicker from '@/components/IndexTicker'
+import DataFreshnessBanner from '@/components/DataFreshnessBanner'
 import { supabase } from '@/lib/db'
 import { MacroEntry } from '@/lib/types'
 
@@ -31,6 +32,7 @@ async function getEntries(): Promise<MacroEntry[]> {
 export default async function Dashboard() {
   const entries = await getEntries()
   const latest = entries[0]
+  const todayUtc = new Date().toISOString().split('T')[0]
 
   if (!latest) {
     return (
@@ -53,6 +55,8 @@ export default async function Dashboard() {
           Scores 6 macro signals daily — real yields, Fed expectations, inflation, oil, USD strength, and credit stress — synthesized by Claude AI from live market data and news into an environment label, action bias, and per-asset guidance. Not financial advice.
         </p>
       </div>
+
+      <DataFreshnessBanner entry={latest} todayUtc={todayUtc} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <MacroStatusCard entry={latest} />
