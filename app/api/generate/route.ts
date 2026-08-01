@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { generateMacroEntry } from '@/lib/claude'
-import { generateMarketCommentary } from '@/lib/commentary'
 import { supabase } from '@/lib/db'
 import { getSupabaseServer } from '@/lib/db.server'
 import { TrendDirection, TavilyArticle } from '@/lib/types'
@@ -78,18 +77,22 @@ export async function GET(request: Request) {
     // Override Claude's trend_direction with computed value from historical data
     entry.trend_direction = computeTrend(entry.macro_score, recentScores)
 
-    // Feature 3: reconcile market moves against macro scores
-    entry.market_commentary = await generateMarketCommentary(entry, historyRows)
-
-    const { data, error } = await getSupabaseServer()
+    // Persist the daily entry before the optional commentary call. The primary
+    // refresh must not be lost if the secondary LLM call is slow or unavailable.
+    // The commentary column is an optional migration; keep the core daily
+    // insert compatible while that migration is absent in older projects.
+    const {
+      market_commentary: _initialCommentary,
+      schema_version: _schemaVersion,
+      ...persistedEntry
+    } = entry
+    const { error } = await getSupabaseServer()
       .from('macro_entries')
-      .insert(entry)
-      .select()
-      .single()
+      .insert(persistedEntry)
 
     if (error) throw error
 
-    return NextResponse.json({ success: true, entry: data })
+    return NextResponse.json({ success: true, entry: persistedEntry })
   } catch (err) {
     console.error('Generate error:', err)
     return NextResponse.json({ error: 'Generation failed' }, { status: 500 })
