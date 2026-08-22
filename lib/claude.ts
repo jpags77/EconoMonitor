@@ -6,6 +6,29 @@ const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 })
 
+const OPENROUTER_MODEL = process.env.OPENROUTER_MODEL ?? 'openai/gpt-oss-20b:free'
+const MOONSHOT_MODEL = process.env.MOONSHOT_MODEL ?? 'moonshot-v1-auto'
+const DEEPSEEK_MODEL = process.env.DEEPSEEK_MODEL ?? 'deepseek-v4-flash'
+
+type GenerationProvider = {
+  name: 'DeepSeek' | 'Moonshot' | 'OpenRouter'
+  endpoint: string
+  model: string
+}
+
+export function getGenerationProvider(env: Record<string, string | undefined> = process.env): GenerationProvider | null {
+  if (env.DEEPSEEK_API_KEY) {
+    return { name: 'DeepSeek', endpoint: 'https://api.deepseek.com/chat/completions', model: env.DEEPSEEK_MODEL ?? DEEPSEEK_MODEL }
+  }
+  if (env.MOONSHOT_API_KEY) {
+    return { name: 'Moonshot', endpoint: 'https://api.moonshot.ai/v1/chat/completions', model: env.MOONSHOT_MODEL ?? MOONSHOT_MODEL }
+  }
+  if (env.OPENROUTER_API_KEY) {
+    return { name: 'OpenRouter', endpoint: 'https://openrouter.ai/api/v1/chat/completions', model: env.OPENROUTER_MODEL ?? OPENROUTER_MODEL }
+  }
+  return null
+}
+
 const SYSTEM_PROMPT = `You are a macro economist analyzing global market conditions.
 You will respond ONLY with valid JSON. No markdown, no explanation, no code blocks.
 Your JSON must exactly match the schema provided. Be analytical and objective.`
@@ -77,28 +100,69 @@ Return exactly this JSON structure:
 export async function generateMacroEntry(articles: TavilyArticle[]): Promise<MacroEntryInput> {
   const today = new Date().toISOString().split('T')[0]
 
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 4096,
-    tools: [{ type: 'web_search_20250305' as const, name: 'web_search', max_uses: 2 }],
-    system: SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: USER_PROMPT(today, articles) }],
-  })
+  let jsonText: string
+  const provider = getGenerationProvider()
+  if (provider) {
+    const apiKey = (process.env[`${provider.name.toUpperCase()}_API_KEY`] ?? process.env.DEEPSEEK_API_KEY)?.replace(/^"|"$/g, '')
+    const isOpenRouter = provider.name === 'OpenRouter'
+    const response = await fetch(provider.endpoint, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        ...(isOpenRouter ? {
+          'HTTP-Referer': 'https://econo-monitor.vercel.app',
+          'X-Title': 'EconoMonitor',
+        } : {}),
+      },
+      body: JSON.stringify({
+        model: provider.model,
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          {
+            role: 'user',
+            content: USER_PROMPT(today, articles).replace(
+              'For key_metrics, use your web_search tool to look up today\'s spot prices only. Do not use web_search for anything else.',
+              'For key_metrics, use the current data in the supplied articles and your best current knowledge. Return plausible approximate values.'
+            ),
+          },
+        ],
+        response_format: { type: 'json_object' },
+        max_tokens: 4096,
+        ...(isOpenRouter ? { reasoning_effort: 'low' } : { thinking: { type: 'disabled' } }),
+      }),
+    })
+    const payload = await response.json() as {
+      error?: { message?: string }
+      choices?: Array<{ message?: { content?: string | null } }>
+    }
+    if (!response.ok) throw new Error(`${provider.name} ${response.status}: ${payload.error?.message ?? 'request failed'}`)
+    jsonText = payload.choices?.[0]?.message?.content?.trim() ?? ''
+    if (!jsonText) throw new Error(`${provider.name} returned no text content`)
+  } else {
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 4096,
+      tools: [{ type: 'web_search_20250305' as const, name: 'web_search', max_uses: 2 }],
+      system: SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: USER_PROMPT(today, articles) }],
+    })
 
-  const textBlocks = message.content.filter(b => b.type === 'text')
-  const textBlock = textBlocks.at(-1)
-  if (!textBlock || textBlock.type !== 'text') {
-    throw new Error(`No text block in Claude response. Content types: ${message.content.map(b => b.type).join(', ')}`)
+    const textBlocks = message.content.filter(b => b.type === 'text')
+    const textBlock = textBlocks.at(-1)
+    if (!textBlock || textBlock.type !== 'text') {
+      throw new Error(`No text block in Claude response. Content types: ${message.content.map(b => b.type).join(', ')}`)
+    }
+    jsonText = textBlock.text.trim()
   }
 
-  let jsonText = textBlock.text.trim()
   if (jsonText.startsWith('```')) {
     jsonText = jsonText.replace(/^```[a-zA-Z0-9]*\s*\n?/, '').replace(/\n?```\s*$/, '')
   }
   const jsonStart = jsonText.indexOf('{')
   const jsonEnd = jsonText.lastIndexOf('}')
   if (jsonStart === -1 || jsonEnd === -1) {
-    throw new Error(`No JSON object found in Claude response. Got: ${textBlock.text.slice(0, 200)}`)
+    throw new Error(`No JSON object found in model response. Got: ${jsonText.slice(0, 200)}`)
   }
   const rawText = jsonText.slice(jsonStart, jsonEnd + 1)
 

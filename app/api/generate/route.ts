@@ -71,7 +71,7 @@ export async function GET(request: Request) {
       console.warn('Tavily returned no articles — proceeding with empty context')
     }
 
-    // Step 2: Claude Sonnet — generate entry (uses web_search for prices, articles for grounding)
+    // Step 2: configured generation model — generate entry (articles provide grounding)
     const entry = await generateMacroEntry(articles)
 
     // Override Claude's trend_direction with computed value from historical data
