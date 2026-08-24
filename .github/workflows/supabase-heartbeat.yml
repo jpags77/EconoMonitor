@@ -1,0 +1,15 @@
+name: Supabase heartbeat
+
+on:
+  schedule:
+    # Daily, including weekends. GitHub Actions schedules use UTC.
+    - cron: '17 15 * * *'
+  workflow_dispatch:
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Query the live entries endpoint
+        run: curl --fail --silent --show-error --max-time 30 'https://econo-monitor.vercel.app/api/entries?limit=1'
