@@ -128,7 +128,7 @@ export async function generateMacroEntry(articles: TavilyArticle[]): Promise<Mac
           },
         ],
         response_format: { type: 'json_object' },
-        max_tokens: 4096,
+        max_tokens: 2048,
         ...(isOpenRouter ? { reasoning_effort: 'low' } : { thinking: { type: 'disabled' } }),
       }),
     })
