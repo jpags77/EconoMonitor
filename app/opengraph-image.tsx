@@ -107,7 +107,7 @@ export default async function Image() {
       {/* Footer */}
       <div style={{ display: 'flex', marginTop: '44px', borderTop: '1px solid #1f2937', paddingTop: '24px' }}>
         <span style={{ color: '#374151', fontSize: '18px' }}>
-          Daily macro signals powered by Claude AI · Not financial advice
+          Daily macro signals based on live market data and news · Not financial advice
         </span>
       </div>
     </div>

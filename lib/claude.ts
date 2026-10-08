@@ -73,9 +73,9 @@ Return exactly this JSON structure:
     { "text": "<driver 2>", "url": "<url from article list>", "date": "<published_date from article>", "source": "<source from article>" }
   ],
   "headlines": [
-    { "text": "<headline 1>", "url": "<url from article list>" },
-    { "text": "<headline 2>", "url": "<url from article list>" },
-    { "text": "<headline 3>", "url": "<url from article list>" }
+    { "text": "<headline 1>", "url": "<url from article list>", "date": "<published_date from article>", "source": "<source from article>" },
+    { "text": "<headline 2>", "url": "<url from article list>", "date": "<published_date from article>", "source": "<source from article>" },
+    { "text": "<headline 3>", "url": "<url from article list>", "date": "<published_date from article>", "source": "<source from article>" }
   ],
   "key_metrics": {
     "oil_wti":      { "value": <number>, "change": <number>, "unit": "USD/barrel" },

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { MacroEntry } from '@/lib/types'
+import InfoAffordance from './InfoAffordance'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -77,10 +78,8 @@ export default function ChatPanel({ entry }: { entry: MacroEntry }) {
   }
 
   return (
-    <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6">
-      <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
-        EconoMonitor Chat
-      </h2>
+    <div className="panel p-6 mt-4">
+      <div className="panel-topline mb-4"><h2 className="panel-title">EconoMonitor Chat</h2><InfoAffordance label="Open EconoMonitor chat" /></div>
 
       <div className="overflow-y-auto max-h-96 flex flex-col gap-3 mb-4 pr-1">
         {messages.map((msg, i) => (

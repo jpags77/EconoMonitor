@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { MacroEntry } from '@/lib/types'
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
+import InfoAffordance from './InfoAffordance'
 
 interface Props {
   entries: MacroEntry[]
@@ -21,6 +22,10 @@ export default function TrendChart({ entries }: Props) {
     <div
       style={{ perspective: '800px', cursor: 'pointer', height: '220px' }}
       onClick={() => setFlipped(f => !f)}
+      role="button"
+      tabIndex={0}
+      aria-label="Open macro score explanation"
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setFlipped(f => !f) }}
     >
       <div
         style={{
@@ -33,7 +38,7 @@ export default function TrendChart({ entries }: Props) {
       >
         {/* Front */}
         <div
-          className="rounded-2xl bg-gray-900 border border-gray-700 p-6"
+          className="panel p-6"
           style={{ backfaceVisibility: 'hidden', gridArea: '1/1' }}
         >
           {front}
@@ -41,12 +46,10 @@ export default function TrendChart({ entries }: Props) {
 
         {/* Back */}
         <div
-          className="rounded-2xl bg-gray-900 border border-gray-700 p-6 flex flex-col gap-3"
+          className="panel p-6 flex flex-col gap-3"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1' }}
         >
-          <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider shrink-0">
-            About the Macro Score
-          </h2>
+          <div className="panel-topline"><h2 className="panel-title">About the Macro Score</h2><InfoAffordance label="Close macro score explanation" /></div>
           <p className="text-gray-400 text-sm leading-relaxed flex-1 overflow-y-auto">
             {SCORE_DESCRIPTION}
           </p>
@@ -59,9 +62,7 @@ export default function TrendChart({ entries }: Props) {
   if (entries.length < 2) {
     return inner(
       <>
-        <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
-          Macro Score Trend (30 days)
-        </h2>
+        <div className="panel-topline mb-4"><h2 className="panel-title">Macro Score Trend (30 days)</h2><InfoAffordance label="Open macro score explanation" /></div>
         <p className="text-gray-600 text-sm text-center py-8">
           Trend will appear after 2+ days of data
         </p>
@@ -78,9 +79,7 @@ export default function TrendChart({ entries }: Props) {
 
   return inner(
     <>
-      <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
-        Macro Score Trend (30 days)
-      </h2>
+      <div className="panel-topline mb-4"><h2 className="panel-title">Macro Score Trend (30 days)</h2><InfoAffordance label="Open macro score explanation" /></div>
       <ResponsiveContainer width="100%" height={120}>
         <LineChart data={data}>
           <XAxis dataKey="date" tick={{ fill: '#6b7280', fontSize: 10 }} tickLine={false} />

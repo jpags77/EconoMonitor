@@ -53,10 +53,8 @@ export default function MacroExplainer({ entry }: Props) {
   const signals = Object.entries(entry.raw_signals) as [string, number][]
 
   return (
-    <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6 space-y-4">
-      <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider">
-        Why {environmentLabel[entry.market_environment]}?
-      </h2>
+    <div className="panel p-6 space-y-4 mt-4">
+      <h2 className="panel-title">Why {environmentLabel[entry.market_environment]}?</h2>
 
       <div className="space-y-3">
         {signals.flatMap(([key, score]) =>

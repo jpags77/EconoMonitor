@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { MacroEntry } from '@/lib/types'
+import InfoAffordance from './InfoAffordance'
 
 const environmentColors: Record<string, string> = {
   favorable: 'bg-green-500',
@@ -35,6 +36,10 @@ export default function MacroStatusCard({ entry }: Props) {
     <div
       style={{ perspective: '800px', cursor: 'pointer', height: '220px' }}
       onClick={() => setFlipped(f => !f)}
+      role="button"
+      tabIndex={0}
+      aria-label="Open macro environment summary"
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setFlipped(f => !f) }}
     >
       <div
         style={{
@@ -47,14 +52,14 @@ export default function MacroStatusCard({ entry }: Props) {
       >
         {/* Front face */}
         <div
-          className="rounded-2xl bg-gray-900 border border-gray-700 p-6"
+          className="panel p-6"
           style={{ backfaceVisibility: 'hidden', gridArea: '1/1' }}
         >
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider">
               Macro Environment
             </h2>
-            <span className="text-gray-500 text-xs">{entry.date}</span>
+            <div className="flex items-center gap-4"><InfoAffordance label="Open macro environment summary" /><span className="text-gray-500 text-xs">{entry.date}</span></div>
           </div>
 
           <div className="flex items-center gap-4">
@@ -89,7 +94,7 @@ export default function MacroStatusCard({ entry }: Props) {
 
         {/* Back face */}
         <div
-          className="rounded-2xl bg-gray-900 border border-gray-700 p-6 flex flex-col gap-3"
+          className="panel p-6 flex flex-col gap-3"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1', overflow: 'hidden' }}
         >
           <div className="flex items-center justify-between shrink-0">

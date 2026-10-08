@@ -3,6 +3,7 @@ import { generateMacroEntry } from '@/lib/claude'
 import { supabase } from '@/lib/db'
 import { getSupabaseServer } from '@/lib/db.server'
 import { TrendDirection, TavilyArticle } from '@/lib/types'
+import { filterRecentArticles } from '@/lib/newsFreshness'
 
 // PRD Section 7: compare today's score vs. 3-day average
 function computeTrend(newScore: number, recentScores: number[]): TrendDirection {
@@ -43,7 +44,7 @@ async function tavilySearch(query: string, maxResults: number): Promise<TavilyAr
 }
 
 async function fetchMacroArticles(): Promise<TavilyArticle[]> {
-  return tavilySearch('macroeconomic news today fed rates inflation', 4)
+  return tavilySearch('macroeconomic news today fed rates inflation', 8)
 }
 
 export async function GET(request: Request) {
@@ -66,7 +67,7 @@ export async function GET(request: Request) {
       .map((r: { macro_score: number }) => r.macro_score)
 
     // Step 1: Tavily — fetch grounding articles for headlines + drivers
-    const articles = await fetchMacroArticles()
+    const articles = filterRecentArticles(await fetchMacroArticles())
     if (articles.length === 0) {
       console.warn('Tavily returned no articles — proceeding with empty context')
     }

@@ -21,7 +21,7 @@ export type Driver =
   | { text: string; url: string; date: string; source: string }
 
 // Headline: plain string (legacy) or grounded article object (new)
-export type HeadlineItem = { text: string; url: string }
+export type HeadlineItem = { text: string; url: string; date?: string; source?: string }
 export type Headline = string | HeadlineItem
 
 export interface KeyMetric {

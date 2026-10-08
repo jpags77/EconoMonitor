@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { MacroEntry, SignalScore, AssetNotes } from '@/lib/types'
 import { scoreColor, scoreBgColor } from '@/lib/scoreColors'
+import InfoAffordance from './InfoAffordance'
 
 const scoreLabel: Record<number, string> = {
   2: 'Strong Buy',
@@ -24,6 +25,10 @@ function AssetCard({ name, score, emoji, note }: {
     <div
       style={{ perspective: '600px', cursor: 'pointer', height: '170px' }}
       onClick={() => setFlipped(f => !f)}
+      role="button"
+      tabIndex={0}
+      aria-label={`Open ${name} analysis`}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setFlipped(f => !f) }}
     >
       <div
         style={{
@@ -36,12 +41,12 @@ function AssetCard({ name, score, emoji, note }: {
       >
         {/* Front face */}
         <div
-          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col justify-between"
+          className="panel p-4 flex flex-col justify-between"
           style={{ backfaceVisibility: 'hidden', gridArea: '1/1' }}
         >
           <div className="flex items-center gap-2">
             <span className="text-xl">{emoji}</span>
-            <span className="text-gray-300 font-medium">{name}</span>
+            <span className="text-gray-300 font-medium">{name}</span><InfoAffordance label={`Open ${name} analysis`} />
           </div>
           <div className={`text-lg font-bold ${scoreColor[score]}`}>
             {scoreLabel[score]}
@@ -60,7 +65,7 @@ function AssetCard({ name, score, emoji, note }: {
 
         {/* Back face */}
         <div
-          className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-2"
+          className="panel p-4 flex flex-col gap-2"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1', overflow: 'hidden' }}
         >
           <div className="flex items-center gap-2 shrink-0">
@@ -90,10 +95,8 @@ export default function AssetGrid({ entry }: Props) {
   const notes = (entry.asset_notes ?? {}) as Partial<AssetNotes>
 
   return (
-    <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6">
-      <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
-        Asset Signals
-      </h2>
+    <div className="panel p-6 mt-4">
+      <div className="panel-topline mb-4"><h2 className="panel-title">Asset Signals</h2><InfoAffordance label="Open asset signal details" /></div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <AssetCard name="Equities" score={entry.equities_score} emoji="📈" note={notes.equities ?? ''} />
         <AssetCard name="Bitcoin"  score={entry.bitcoin_score}  emoji="₿"  note={notes.bitcoin  ?? ''} />

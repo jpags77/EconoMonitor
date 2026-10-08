@@ -1,4 +1,5 @@
 import { MacroEntry, KeyMetric } from '@/lib/types'
+import InfoAffordance from './InfoAffordance'
 
 interface Props {
   entry: MacroEntry
@@ -20,7 +21,7 @@ function MetricCard({ name, metric }: { name: string; metric: KeyMetric }) {
   const arrow = isPositive ? '▲' : '▼'
 
   return (
-    <div className="rounded-xl bg-gray-800 border border-gray-700 p-4 flex flex-col gap-1">
+    <div className="border border-white/10 p-4 flex flex-col gap-1 hover:border-amber-400/30 transition-colors">
       <span className="text-gray-500 text-xs uppercase tracking-wider">{name}</span>
       <span className="text-white font-semibold text-lg">
         {metric.value.toLocaleString()} <span className="text-gray-500 text-xs font-normal">{metric.unit}</span>
@@ -38,20 +39,16 @@ export default function KeyMetrics({ entry }: Props) {
 
   if (isEmpty) {
     return (
-      <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6">
-        <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
-          Market Data
-        </h2>
+      <div className="panel p-6 mt-4">
+        <div className="panel-topline mb-4"><h2 className="panel-title">Market Data</h2><InfoAffordance label="Open market data details" /></div>
         <p className="text-gray-600 text-sm">Market data unavailable for this entry.</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6">
-      <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
-        Market Data
-      </h2>
+    <div className="panel p-6 mt-4">
+      <div className="panel-topline mb-4"><h2 className="panel-title">Market Data</h2><InfoAffordance label="Open market data details" /></div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {(Object.entries(metrics) as [string, KeyMetric][]).map(([key, metric]) => (
           <MetricCard

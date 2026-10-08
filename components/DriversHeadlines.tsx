@@ -1,4 +1,5 @@
 import { MacroEntry, Driver, Headline } from '@/lib/types'
+import InfoAffordance from './InfoAffordance'
 
 interface Props {
   entry: MacroEntry
@@ -13,17 +14,14 @@ function isHeadlineObject(h: Headline): h is { text: string; url: string } {
 }
 
 export default function DriversHeadlines({ entry }: Props) {
-  const timestamp = new Date(entry.created_at).toLocaleDateString('en-US', {
+  const signalDate = new Date(`${entry.date}T00:00:00`).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
   })
 
   return (
-    <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6 space-y-6">
+    <div className="panel p-6 space-y-6">
       <div>
-        <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-3">
-          Key Drivers
-        </h2>
+        <div className="panel-topline mb-3"><h2 className="panel-title">Key Drivers</h2><InfoAffordance label="Open key driver details" /></div>
         <ul className="space-y-3">
           {entry.drivers.map((driver, i) => (
             <li key={i} className="flex gap-2 text-sm">
@@ -52,23 +50,28 @@ export default function DriversHeadlines({ entry }: Props) {
 
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider">
-            Signal Headlines
-          </h2>
-          <span className="text-gray-600 text-xs">{timestamp}</span>
+          <h2 className="panel-title">Signal Headlines</h2>
+          <span className="text-gray-600 text-xs">Signal date: {signalDate}</span>
         </div>
         <ul className="space-y-2">
           {entry.headlines.map((headline, i) => (
             <li key={i} className="text-sm border-l-2 border-gray-700 pl-3">
               {isHeadlineObject(headline) ? (
-                <a
-                  href={headline.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-gray-200 transition-colors"
-                >
-                  {headline.text}
-                </a>
+                <div>
+                  <a
+                    href={headline.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gray-400 hover:text-gray-200 transition-colors"
+                  >
+                    {headline.text}
+                  </a>
+                  {headline.date && (
+                    <div className="text-gray-600 text-xs mt-0.5">
+                      Published {headline.date}{headline.source ? ` · ${headline.source}` : ''}
+                    </div>
+                  )}
+                </div>
               ) : (
                 <span className="text-gray-400">{headline}</span>
               )}

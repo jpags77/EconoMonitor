@@ -1,4 +1,5 @@
 import { MacroEntry } from '@/lib/types'
+import InfoAffordance from './InfoAffordance'
 
 interface Props {
   entry: MacroEntry
@@ -8,10 +9,8 @@ export default function MarketExplainer({ entry }: Props) {
   if (!entry.market_commentary) return null
 
   return (
-    <div className="rounded-2xl bg-gray-900 border border-gray-700 p-6 space-y-3">
-      <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider">
-        Market vs. Macro
-      </h2>
+    <div className="panel p-6 space-y-3 mt-4">
+      <div className="panel-topline"><h2 className="panel-title">Market vs. Macro</h2><InfoAffordance label="Open market commentary details" /></div>
       <p className="text-gray-300 text-sm leading-relaxed">
         {entry.market_commentary}
       </p>

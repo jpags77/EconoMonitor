@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { MacroEntry, ActionBias } from '@/lib/types'
+import InfoAffordance from './InfoAffordance'
 
 const actionConfig: Record<ActionBias, { label: string; color: string; description: string }> = {
   deploy: {
@@ -36,8 +37,12 @@ export default function ActionPanel({ entry }: Props) {
 
   return (
     <div
-      style={{ perspective: '800px', cursor: 'pointer', height: '185px' }}
+      style={{ perspective: '800px', cursor: 'pointer', height: '220px' }}
       onClick={() => setFlipped(f => !f)}
+      role="button"
+      tabIndex={0}
+      aria-label="Open action bias notes"
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') setFlipped(f => !f) }}
     >
       <div
         style={{
@@ -50,12 +55,10 @@ export default function ActionPanel({ entry }: Props) {
       >
         {/* Front face */}
         <div
-          className="rounded-2xl bg-gray-900 border border-gray-700 p-6"
+          className="panel p-6"
           style={{ backfaceVisibility: 'hidden', gridArea: '1/1' }}
         >
-          <h2 className="text-gray-400 text-sm font-medium uppercase tracking-wider mb-4">
-            Action Bias
-          </h2>
+          <div className="panel-topline mb-4"><h2 className="panel-title">Action Bias</h2><InfoAffordance label="Open action bias notes" /></div>
           <div className={`text-3xl font-black ${config.color} mb-2`}>
             {config.label}
           </div>
@@ -64,7 +67,7 @@ export default function ActionPanel({ entry }: Props) {
 
         {/* Back face */}
         <div
-          className="rounded-2xl bg-gray-900 border border-gray-700 p-6 flex flex-col gap-3"
+          className="panel p-6 flex flex-col gap-3"
           style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', gridArea: '1/1', overflow: 'hidden' }}
         >
           <div className="flex items-center justify-between shrink-0">

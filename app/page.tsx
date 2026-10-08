@@ -45,19 +45,28 @@ export default async function Dashboard() {
   }
 
   return (
-    <main className="max-w-6xl mx-auto px-4 py-8 md:pt-14 space-y-4">
+    <main className="site-shell">
       <IndexTicker entry={latest} />
-      <div className="mb-6 rounded-2xl bg-white px-6 py-5">
-        <h1 className="text-5xl font-black text-black mb-1 tracking-tight">EconoMonitor</h1>
-        <p className="text-gray-600 text-sm max-w-2xl">
-          Scores 6 macro signals daily — real yields, Fed expectations, inflation, oil, USD strength, and credit stress — synthesized by Claude AI from live market data and news into an environment label, action bias, and per-asset guidance. Not financial advice.
-        </p>
-      </div>
+      <nav className="site-nav" aria-label="Primary">
+        <span className="brand-mark">EM//</span>
+        <span className="nav-meta"><span>DAILY MACRO INTELLIGENCE</span><span>{latest.date}</span></span>
+      </nav>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <section className="hero">
+        <div className="eyebrow">Market conditions, decoded daily</div>
+        <h1>Econo<span>Monitor</span></h1>
+        <p className="hero-copy">
+          Scores 6 macro signals daily — real yields, Fed expectations, inflation, oil, USD strength, and credit stress — synthesized from live market data and news into an environment label, action bias, and per-asset guidance. Not financial advice.
+        </p>
+      </section>
+
+      <section>
+        <div className="section-kicker"><div className="eyebrow">01 / Current read</div><h2>What the market is saying</h2></div>
+        <div className="dashboard-grid two">
         <MacroStatusCard entry={latest} />
         <ActionPanel entry={latest} />
-      </div>
+        </div>
+      </section>
 
       <MacroExplainer entry={latest} />
 
@@ -69,10 +78,12 @@ export default async function Dashboard() {
 
       <ChatPanel entry={latest} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="dashboard-grid two last-row mt-8">
         <TrendChart entries={entries} />
         <DriversHeadlines entry={latest} />
       </div>
+
+      <div className="footer-line"><span>EconoMonitor // Built for context</span><span>Not financial advice</span></div>
     </main>
   )
 }

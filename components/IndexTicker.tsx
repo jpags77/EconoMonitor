@@ -31,7 +31,7 @@ export default function IndexTicker({ entry }: Props) {
   if (items.length === 0) return null
 
   return (
-    <div className="hidden md:flex fixed top-0 inset-x-0 z-50 h-10 items-center justify-center gap-8 border-b border-gray-800 bg-gray-950/95 backdrop-blur px-4">
+    <div className="ticker-bar hidden md:flex fixed top-0 inset-x-0 z-50 h-10 items-center justify-center gap-8 bg-black/95 backdrop-blur px-4">
       {items.map((i) => (
         <TickerItem key={i.key} label={i.label} metric={(km as KeyMetrics)[i.key]} />
       ))}
